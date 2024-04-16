@@ -5,6 +5,7 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from process_image import process_image
 from datetime import datetime
+from tqdm import tqdm
 
 ########################
 # ADJUSTABLE VARIABLES #
@@ -92,11 +93,11 @@ def main():
     df = read_coordinates()
 
     # Extract the image URLs from the city_settings JSON
-    for item in city_settings['timesteps']:
+    for item in tqdm(city_settings['timesteps']):
         image_filename = "images/" + item['value'].split("/")[1] + ".jpg"
         img_url = img_base_url + item['value'] + ".jpg"
 
-        print("Downloading image from URL: ", img_url)
+        print("\nDownloading image from URL: ", img_url)
         
         image_content = fetch_item(img_url)
 
@@ -111,7 +112,7 @@ def main():
         new_df = process_image(image_filename, date, time,
                             item['legend']['min'], item['legend']['max'], df)
         
-        df = pd.concat([df, new_df], ignore_index=True)
+        df = new_df
 
         print(f"Image {item['value']} processed successfully.")
 
